@@ -10,21 +10,23 @@ class Customer
     @id = options['id'].to_i
     @name = options['name']
     @funds = options['funds'].to_i
+    @tickets_purchased = 0
   end
 
   def save()
     sql = "INSERT INTO customers
     (
       name,
-      funds
+      funds,
+      tickets_purchased
     )
     VALUES
     (
-      $1, $2
+      $1, $2, $3
     )
     RETURNING id"
-    values = [@name, @funds]
-    cust_to_save = SqlRunner.run( sql, values ).first
+    values = [@name, @funds, @tickets_purchased]
+    cust_to_save = SqlRunner.run(sql, values)[0]
     @id = cust_to_save['id'].to_i
   end
 
@@ -49,8 +51,8 @@ class Customer
   end
 
   def update()
-    sql = "UPDATE customers SET (name, funds) = ($1, $2) WHERE id = $3"
-    values = [@name, @funds, @id]
+    sql = "UPDATE customers SET (name, funds, tickets_purchased) = ($1, $2, $3) WHERE id = $4"
+    values = [@name, @funds, @tickets_purchased, @id]
     SqlRunner.run(sql, values)
   end
 
@@ -71,7 +73,9 @@ class Customer
     elsif @funds > film.price
       @funds -= film.price
       film.tickets_available -= 1
+      @tickets_purchased += 1
       your_ticket = Ticket.new({ 'customer_id' => @id, 'film_id' => film.id })
+      your_ticket.save
       film.update
       self.update
       return your_ticket
