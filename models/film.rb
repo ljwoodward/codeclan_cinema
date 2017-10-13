@@ -4,26 +4,28 @@ require_relative("customer.rb")
 class Film
 
   attr_reader :id
-  attr_accessor :title, :price
+  attr_accessor :title, :price, :tickets_available
 
   def initialize( options )
     @id = options['id'].to_i
     @title = options['title']
     @price = options['price'].to_i
+    @tickets_available = options['tickets_available'].to_i
   end
 
   def save()
     sql = "INSERT INTO films
     (
       title,
-      price
+      price,
+      tickets_available
     )
     VALUES
     (
-      $1, $2
+      $1, $2, $3
     )
     RETURNING id"
-    values = [@title, @price]
+    values = [@title, @price, @tickets_available]
     film_to_save = SqlRunner.run( sql, values ).first
     @id = film_to_save['id'].to_i
   end
@@ -49,8 +51,8 @@ class Film
   end
 
   def update()
-    sql = "UPDATE films SET (title, price) = ($1, $2) WHERE id = $3"
-    values = [@title, @price, @id]
+    sql = "UPDATE films SET (title, price, tickets_available) = ($1, $2, $3) WHERE id = $4"
+    values = [@title, @price, @tickets_available, @id]
     SqlRunner.run(sql, values)
   end
 

@@ -65,5 +65,20 @@ class Customer
     return results
   end
 
+  def purchase_ticket(film)
+    if film.tickets_available == 0
+      return "Sorry, this film is fully booked"
+    elsif @funds > film.price
+      @funds -= film.price
+      film.tickets_available -= 1
+      your_ticket = Ticket.new({ 'customer_id' => @id, 'film_id' => film.id })
+      film.update
+      self.update
+      return your_ticket
+    else
+      return "Sorry, you have insufficient funds to purchase this ticket"
+    end
+  end
+
 
 end
