@@ -2,7 +2,8 @@ require_relative("../db/sql_runner")
 
 class Customer
 
-  attr_reader :id, :name, :funds
+  attr_reader :id
+  attr_accessor :name, :funds
 
   def initialize( options )
     @id = options['id'].to_i
@@ -43,7 +44,13 @@ class Customer
   def delete()
     sql = "DELETE FROM customers WHERE id = $1"
     values = [@id]
-    SqlRunner.run(sql,values)
+    SqlRunner.run(sql, values)
+  end
+
+  def update()
+    sql = "UPDATE customers SET (name, funds) = ($1, $2) WHERE id = $3"
+    values = [@name, @funds, @id]
+    SqlRunner.run(sql, values)
   end
 
 
