@@ -1,4 +1,4 @@
-equire_relative("../db/sql_runner")
+require_relative("../db/sql_runner")
 
 class Customer
 
@@ -9,5 +9,6 @@ class Customer
     @name = options['name']
     @funds = options['funds'].to_i
   end
+
 
 end
