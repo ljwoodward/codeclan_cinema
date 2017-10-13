@@ -1,4 +1,6 @@
 require_relative("../db/sql_runner")
+require_relative("film.rb")
+require_relative("customer.rb")
 
 class Ticket
 
@@ -44,6 +46,22 @@ class Ticket
     sql = "DELETE FROM tickets WHERE id = $1"
     values = [@id]
     SqlRunner.run(sql,values)
+  end
+
+  def film
+    sql = "SELECT * FROM films
+    WHERE id = $1"
+    values = [@film_id]
+    results = SqlRunner.run(sql, values)
+    return Film.new(results[0])
+  end
+
+  def customer
+    sql = "SELECT * FROM customers
+    WHERE id = $1"
+    values = [@customer_id]
+    result = SqlRunner.run(sql, values)[0]
+    return Customer.new(result)
   end
 
 
